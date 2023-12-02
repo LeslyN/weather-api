@@ -1,9 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import dotenv from 'dotenv';
-dotenv.config();
-const APIKey = process.env.API_KEY;
-const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=${APIKey}&q=London&aqi=no`).then(res => res.json())
+const token = import.meta.env.API_KEY;
+
 ---
 
 <Layout title="Welcome to Astro.">
@@ -37,6 +35,7 @@ const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=${AP
 			</defs>
 		</svg>
 		<h1>Welcome to <span class="text-gradient">Weather</span></h1>
+	  <span id="token" data-token={token}></span>
 		<section class="weather-container">
 			<div class="flex items-center">
 				<span class="text-black">
@@ -47,19 +46,19 @@ const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=${AP
 				</button>
 			</div>
 			<div class="my-6 text-center">
-				<img src={response.current.condition.icon} alt="weather" class="inline">
-				<p class="text-3xl text-extra-bold">{response.current.temp_c}°C</p>
-				<h3>{response.location.name}</h3>
+				<img src="" alt="/eather" class="inline weather-icon">
+				<p id="temperature-degrees" class="text-3xl text-extra-bold"></p>
+        <h3 id="location-name"></h3>
 			</div>
 			
-			<p class="text-2xl md:pb-2 font-bold text-center md:text-justify md:ml-8">{response.current.condition.text}</p>
+			<p class="condition-text text-2xl md:pb-2 font-bold text-center md:text-justify md:ml-8"></p>
 			<div class="flex flex-col md:flex-row md:justify-around items-center mt-2">
 				<div class="flex flex-col items-center my-6 md:my-0">
 					<p>
 						<span class="mr-2"><i class="fas fa-water"></i></span>
 						<span class="text-xl">Humidity</span>
 					</p>
-					<span class="text-2xl text-extra-bold"> {response.current.humidity}%</span>
+					<span class="humidity-quantity text-2xl text-extra-bold"></span>
 				</div>
 				
 				<div class="flex flex-col items-center">
@@ -67,7 +66,7 @@ const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=${AP
 						<span class="mr-2"><i class="fas fa-wind"></i></span>
 						<span class="text-xl">Wind speed</span>
 					</p>
-					<span class="text-xl text-extra-bold">{response.current.wind_kph} KM/H</span>
+					<span class="wind-speed text-xl text-extra-bold"></span>
 				</div>
 				
 			</div>
@@ -119,3 +118,40 @@ const response = await fetch(`http://api.weatherapi.com/v1/current.json?key=${AP
 		@apply rounded-lg p-2 border-gray-300 outline-none focus:border-blue-500;
 	}
 </style>
+<script>
+  const element = document.querySelector('#token');
+  if (element) {
+    const token = element.dataset.token;
+    const results = await fetch(`https://api.weatherapi.com/v1/current.json?key=${token}&q=London&aqi=no`);
+    const data = await results.json();
+    const locationNameHtml = document.querySelector('#location-name');
+    const weatherIconHtml = document.querySelector('.weather-icon');
+    const temperatureDegreesHtml = document.querySelector('#temperature-degrees');
+    const conditionTextHtml = document.querySelector('.condition-text');
+    const humidityQuantityHtml = document.querySelector('.humidity-quantity');
+    const windSpeedHtml = document.querySelector('.wind-speed');
+
+
+    if (locationNameHtml) {
+      locationNameHtml.innerHTML = data.location.name;
+    }
+    if (weatherIconHtml) {
+      weatherIconHtml.src = data.current.condition.icon;
+    }
+    if (temperatureDegreesHtml) {
+      temperatureDegreesHtml.innerHTML = `${ data.current.temp_c }ºC`;
+    }
+    if (conditionTextHtml) {
+      conditionTextHtml.innerHTML = data.current.condition.text;
+    }
+    if (humidityQuantityHtml) {
+      humidityQuantityHtml.innerHTML = `${ data.current.humidity }%`;
+    }
+    if (windSpeedHtml) {
+      windSpeedHtml.innerHTML = `${ data.current.wind_kph } km/h`;
+    }
+
+    element.remove();
+  }
+</script>
+
