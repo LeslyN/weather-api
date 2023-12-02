@@ -39,14 +39,14 @@ const token = import.meta.env.API_KEY;
 		<section class="weather-container">
 			<div class="flex items-center">
 				<span class="text-black">
-					<input type="text" class=" md:w-96" id="" placeholder="Enter your location" spellcheck="false">
+					<input type="text" class=" md:w-96" id="input-text" placeholder="Enter your location" spellcheck="false">
 				</span>
-				<button class="text-gradient pl-4">
+				<button class="search-button text-gradient pl-4">
 					<span class="fas fa-search"></span>
 				</button>
 			</div>
 			<div class="my-6 text-center">
-				<img src="" alt="/eather" class="inline weather-icon">
+				<img src="" alt="weather" class="inline weather-icon">
 				<p id="temperature-degrees" class="text-3xl text-extra-bold"></p>
         <h3 id="location-name"></h3>
 			</div>
@@ -120,10 +120,11 @@ const token = import.meta.env.API_KEY;
 </style>
 <script>
   const element = document.querySelector('#token');
+  const apiUrl = 'https://api.weatherapi.com/v1/current.json?';
+  const defaultCity = 'London';
   if (element) {
-    const token = element.dataset.token;
-    const results = await fetch(`https://api.weatherapi.com/v1/current.json?key=${token}&q=London&aqi=no`);
-    const data = await results.json();
+    const inputText = document.querySelector('#input-text');
+    const searchButton = document.querySelector('.search-button');
     const locationNameHtml = document.querySelector('#location-name');
     const weatherIconHtml = document.querySelector('.weather-icon');
     const temperatureDegreesHtml = document.querySelector('#temperature-degrees');
@@ -131,26 +132,37 @@ const token = import.meta.env.API_KEY;
     const humidityQuantityHtml = document.querySelector('.humidity-quantity');
     const windSpeedHtml = document.querySelector('.wind-speed');
 
+   
+    async function weatherForecast(city) {
+      const token = element.dataset.token;
+      const results = await fetch(`${apiUrl}key=${token}&q=${city}&aqi=no`);
+      const data = await results.json();
 
-    if (locationNameHtml) {
-      locationNameHtml.innerHTML = data.location.name;
-    }
-    if (weatherIconHtml) {
-      weatherIconHtml.src = data.current.condition.icon;
-    }
-    if (temperatureDegreesHtml) {
-      temperatureDegreesHtml.innerHTML = `${ data.current.temp_c }ºC`;
-    }
-    if (conditionTextHtml) {
-      conditionTextHtml.innerHTML = data.current.condition.text;
-    }
-    if (humidityQuantityHtml) {
-      humidityQuantityHtml.innerHTML = `${ data.current.humidity }%`;
-    }
-    if (windSpeedHtml) {
-      windSpeedHtml.innerHTML = `${ data.current.wind_kph } km/h`;
-    }
 
+      if (locationNameHtml) {
+        locationNameHtml.innerHTML = data.location.name;
+      }
+      if (weatherIconHtml) {
+        weatherIconHtml.src = data.current.condition.icon;
+      }
+      if (temperatureDegreesHtml) {
+       temperatureDegreesHtml.innerHTML = `${ data.current.temp_c }ºC`;
+      }
+      if (conditionTextHtml) {
+        conditionTextHtml.innerHTML = data.current.condition.text;
+      }
+      if (humidityQuantityHtml) {
+        humidityQuantityHtml.innerHTML = `${ data.current.humidity }%`;
+      }
+      if (windSpeedHtml) {
+        windSpeedHtml.innerHTML = `${ data.current.wind_kph } km/h`;
+      }
+    }
+ 
+    searchButton.addEventListener('click', () => {
+      weatherForecast(inputText.value);
+    })
+      
     element.remove();
   }
 </script>
