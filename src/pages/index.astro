@@ -131,13 +131,38 @@ const token = import.meta.env.API_KEY;
     const conditionTextHtml = document.querySelector('.condition-text');
     const humidityQuantityHtml = document.querySelector('.humidity-quantity');
     const windSpeedHtml = document.querySelector('.wind-speed');
+    const token = element.dataset.token;
 
+    const defaultResults = await fetch(`${apiUrl}key=${token}&q=${defaultCity}&aqi=no`);
+    const dataDefault = await defaultResults.json();
+
+    const weatherForecastDefault = () => {
+
+      if (locationNameHtml) {
+        locationNameHtml.innerHTML = dataDefault.location.name;
+      }
+      if (weatherIconHtml) {
+        weatherIconHtml.src = dataDefault.current.condition.icon;
+      }
+      if (temperatureDegreesHtml) {
+        temperatureDegreesHtml.innerHTML = `${ dataDefault.current.temp_c }ºC`;
+      }
+      if (conditionTextHtml) {
+        conditionTextHtml.innerHTML = dataDefault.current.condition.text;
+      }
+      if (humidityQuantityHtml) {
+        humidityQuantityHtml.innerHTML = `${ dataDefault.current.humidity }%`;
+      }
+      if (windSpeedHtml) {
+        windSpeedHtml.innerHTML = `${ dataDefault.current.wind_kph } km/h`;
+      }
+    }
    
+    weatherForecastDefault();
+
     async function weatherForecast(city) {
-      const token = element.dataset.token;
       const results = await fetch(`${apiUrl}key=${token}&q=${city}&aqi=no`);
       const data = await results.json();
-
 
       if (locationNameHtml) {
         locationNameHtml.innerHTML = data.location.name;
@@ -161,6 +186,7 @@ const token = import.meta.env.API_KEY;
  
     searchButton.addEventListener('click', () => {
       weatherForecast(inputText.value);
+      inputText.value = '';
     })
       
     element.remove();
