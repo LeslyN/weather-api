@@ -18,5 +18,9 @@
   "volta": {
     "node": "18.19.0",
     "npm": "10.2.4"
+  },
+  "devDependencies": {
+    "eslint": "^8.55.0",
+    "eslint-plugin-astro": "^0.30.0"
   }
 }
