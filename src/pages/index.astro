@@ -81,7 +81,6 @@ const token = import.meta.env.API_KEY;
 		width: 800px;
 		max-width: calc(100% - 2rem);
 		line-height: 1.6;
-		/* height: 100vh; */
 		font-family: 'Merienda', sans-serif;
 	}
 	.astro-a {
@@ -122,6 +121,7 @@ const token = import.meta.env.API_KEY;
   const element = document.querySelector('#token');
   const apiUrl = 'https://api.weatherapi.com/v1/current.json?';
   const defaultCity = 'London';
+  
   if (element) {
     const inputText = document.querySelector('#input-text');
     const searchButton = document.querySelector('.search-button');
@@ -137,7 +137,6 @@ const token = import.meta.env.API_KEY;
     const dataDefault = await defaultResults.json();
 
     const weatherForecastDefault = () => {
-
       if (locationNameHtml) {
         locationNameHtml.innerHTML = dataDefault.location.name;
       }
@@ -157,7 +156,6 @@ const token = import.meta.env.API_KEY;
         windSpeedHtml.innerHTML = `${ dataDefault.current.wind_kph } km/h`;
       }
     }
-   
     weatherForecastDefault();
 
     async function weatherForecast(city) {
